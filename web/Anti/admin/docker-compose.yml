@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  money-heist-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: money-heist-ctf
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - FLAG=HTB{m0n3y_h315t_r3act2sh3ll_pwn3d}
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:mode=1777,size=100m
+      - /app/.next/cache:mode=0755,size=50m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

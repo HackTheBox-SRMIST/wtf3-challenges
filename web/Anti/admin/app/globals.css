@@ -1,0 +1,4 @@
+/* Global Styles - Import all custom CSS */
+@import '../styles/layout.css';
+@import '../styles/card.css';
+@import '../styles/quote.css';
