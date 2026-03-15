@@ -1,0 +1,16 @@
+module crafting_tweaks:trade_balance
+
+fn adjust() {
+    villagers = world.entities("villager")
+    for v in villagers {
+        trades = v.trades()
+        for t in trades {
+            if t.price > 5 {
+                t.price -= 1
+            }
+            if t.item == "emerald" {
+                t.stock += 2
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+module crafting_tweaks:repair_logic
+
+fn patch() {
+    items = world.items()
+    for it in items {
+        if it.damage > 0 {
+            cost = it.damage * 0.15
+            if it.type == "tool" {
+                it.repairCost = cost
+            }
+        }
+    }
+}
