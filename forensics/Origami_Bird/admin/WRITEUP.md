@@ -11,7 +11,3 @@ The Professor left a paper origami bird at the scene. You've scanned it into a h
 3. **Steghide Extraction:** tun `steghide extract -sf origami.jpg -p "Dali_M4sk_2026"` to extract a hidden file named `coordinates.txt`.
 4. **Zero-Width Steganography:** the extracted `coordinates.txt` looks like a normal text file, but it contains invisible Zero-Width Characters (ZWSP `U+200B` and ZWNJ `U+200C`) representing binary data.
 5. **Decode Flag:** use a zero-width decoding tool to convert the invisible characters back to text, revealing the flag.
-
-## Files
-- `admin/generate_challenge.py`: Script used to build the challenge artifact.
-- `handout/handout.zip`: The zip file provided to the participants containing `origami.jpg`.
