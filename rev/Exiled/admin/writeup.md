@@ -1,20 +1,10 @@
-# Minecraft Gossip Writeup
-
----
-
-## Overview
-
-In this challenge, players are given a Minecraft save world folder named `silent_village`. The goal is to analyze the Minecraft entity region files (`.mca`) and uncover a hidden flag encoded within the properties of the entities.
-
----
+# Exiled Writeup
 
 ## Step 1: Reconnaissance
 
 Upon investigating the provided `silent_village` folder, the most notable sub-directory is `entities/`, which contains Minecraft Region files (`.mca` extension). These files follow the Anvil format and store NBT (Named Binary Tag) data for all entities loaded in different chunks of the world.
 
 A standard approach to reverse-engineering or analyzing Minecraft map data is to use NBT parsers like `NBTExplorer` or writing a Python script using libraries such as `nbtlib` to read the raw entity attributes.
-
----
 
 ## Step 2: The Datapack Clue
 
@@ -46,8 +36,6 @@ This snippet tells us exactly where the hidden information lies and how to extra
 
 Equipped with this logic, we know our target: extract Villager NBT data.
 
----
-
 ## Step 3: Finding the Anomaly in Region Files
 
 When players dump or explore the NBT trees inside the `.mca` files, they can locate the `minecraft:villager` entities mentioned in the datapack. Villagers in Minecraft contain a `Gossips` tag, which usually tracks a player's reputation  as per the 1.14 update 
@@ -67,8 +55,6 @@ Looking at the `Gossips` array inside these NBT structures:
 
 The integer `Value` entries fall into the printable ASCII range. As hinted by the script, the sequence of these values encodes the flag.
 
----
-
 ## Step 4: The Encoding Mechanism
 
 Following the `.bolt` script's logic, if the player extracts the raw decimal `Value` sequentially across all the villagers, they get an array of numbers. 
@@ -83,8 +69,6 @@ The challenge employs a dynamic XOR cipher. Every time a new villager entity is 
 
 To decode, the formula is symmetric (as shown in the `.bolt` clue):
 `flag_byte = gossip_value ^ villager_index`
-
----
 
 ## Step 5: The Solve Script
 
