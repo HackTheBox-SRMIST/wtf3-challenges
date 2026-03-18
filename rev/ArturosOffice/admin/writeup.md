@@ -1,14 +1,5 @@
 # Arturo’s Office Writeup
 
----
-
-## Overview
-
-This challenge presents a vault system that validates a 20-digit access code.  
-Instead of directly comparing input, the program evaluates it through a set of arithmetic constraints.
-
----
-
 ## Initial Recon
 
 Open the binary in Ghidra.
@@ -20,8 +11,6 @@ Search for strings:
 `Enter vault access code:`
 
 This leads directly to the main function.
-
----
 
 ### Step 2: Confirming Main Function
 
@@ -66,8 +55,6 @@ FUN_140001460(&local_38, &local_44, &local_40, &local_3c);
 ```
 
 This function extracts three integers from the input and is passed along with the input.
-
----
 
 ## Function: `FUN_140001460` (Splitting Logic)
 
@@ -128,8 +115,6 @@ value = value * 10 + digit;
 
 This converts ASCII digits into integers.
 
----
-
 ### Loop 1 — First 7 Digits
 
 ```c
@@ -148,8 +133,6 @@ do {
 Reads characters from index `[0 → 6]` and builds an integer.
 `d1 = input[0:7]`
 
----
-
 ### Loop 2 — Next 6 Digits
 
 ```c
@@ -166,8 +149,6 @@ do {
 Reads characters from index `[7 → 12]`.
 `d2 = input[7:13]`
 
----
-
 ### Loop 3 — Final 7 Digits
 
 ```c
@@ -183,13 +164,9 @@ do {
 Reads characters from index `[13 → 19]`.
 `d3 = input[13:20]`
 
----
-
 ### Summary of Split
 
 `input (20 digits)` -> `d1 = first 7 digits`, `d2 = next 6 digits`, `d3 = last 7 digits`l
-
----
 
 ## Constraint Checks (Core Logic)
 
@@ -233,8 +210,6 @@ if (
 - `d1 * 3`: XOR with d3
 - `d2 * 4` added
 
----
-
 ## Solving the Equations
 
 Now that we know the mathematical constraints, we can script a way to solve this system rather than brute-forcing it manually by guessing inputs. The optimal approach is to use symbolic execution tool like angr or z3.
@@ -276,8 +251,6 @@ else:
 ```
 
 Running this script prints the magic 20-digit combination: `10397116105116111115`.
-
----
 
 ## Retrieving the Flag
 
