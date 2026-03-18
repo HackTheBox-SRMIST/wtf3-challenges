@@ -1,0 +1,33 @@
+[
+  uuid(C411C471-1234-4321-ABCD-112233445566),
+  version(1.0)
+]
+library VaultLib
+{
+    importlib("stdole2.tlb");
+
+    [
+      uuid(CA700001-1111-2222-AAAA-010203040506)
+    ]
+    interface IPublic : IUnknown {
+        void PublicMethod();
+    };
+
+    [
+      uuid(C4A70002-3333-4444-4D45-305743415431)
+    ]
+    interface IHidden : IUnknown {
+        void GetFood();
+        void GetCat();
+        void GetFlag([out] char* out);
+    };
+
+    // NEW UNIQUE UUID (change this)
+    [
+      uuid(8F1C2A10-9B34-4F21-ABCD-998877665544)
+    ]
+    coclass Vault {
+        [default] interface IPublic;
+        interface IHidden;
+    };
+};
