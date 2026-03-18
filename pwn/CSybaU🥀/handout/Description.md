@@ -4,7 +4,7 @@
 
 ### Description
 ```
-Prof Just Sybau...
+Prof Just Syabu...
 
 ```
 
