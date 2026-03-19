@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Banco de España Digital</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <span class="logo">🏦</span>
+      <span class="brand-text">Banco de <span>España</span> Digital</span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="/login.html" class="active">Sign In</a></li>
+      <li><a href="/register.html" class="btn btn-primary btn-sm">Open Account</a></li>
+    </ul>
+  </nav>
+
+  <div class="auth-container">
+    <div class="card auth-card">
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Sign in to your Banco de España Digital account</p>
+      <div class="alert alert-error" id="errorAlert"></div>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter your username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">Sign In</button>
+      </form>
+      <p class="form-footer mt-3">Don't have an account? <a href="/register.html">Open one now</a></p>
+    </div>
+  </div>
+
+  <script>
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const err = document.getElementById('errorAlert');
+      err.style.display = 'none';
+      btn.disabled = true; btn.textContent = 'Signing in...';
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+          })
+        });
+        const data = await res.json();
+        if (res.ok) { window.location.href = '/dashboard.html'; }
+        else { err.textContent = data.error; err.style.display = 'block'; }
+      } catch(e) { err.textContent = 'Network error.'; err.style.display = 'block'; }
+      btn.disabled = false; btn.textContent = 'Sign In';
+    }
+    if (document.cookie.includes('session=')) window.location.href = '/dashboard.html';
+  </script>
+</body>
+</html>

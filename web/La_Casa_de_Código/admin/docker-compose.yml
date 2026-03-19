@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  banco:
+    build: .
+    container_name: la-casa-de-codigo
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Banco de España Digital</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+</head>
+
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <span class="logo">🏦</span>
+      <span class="brand-text">Banco de <span>España</span> Digital</span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="/dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="#" onclick="logout()" class="btn btn-outline btn-sm">Sign Out</a></li>
+    </ul>
+  </nav>
+
+  <div class="dashboard">
+    <div class="dash-header">
+      <h1 id="welcomeMsg">Welcome back</h1>
+      <p id="roleLabel" class="text-muted">Customer Account</p>
+    </div>
+
+    <div class="balance-card">
+      <p class="balance-label">Available Balance</p>
+      <div class="balance-amount" id="balanceDisplay">€0.00</div>
+      <div class="balance-actions">
+        <button class="btn btn-success" onclick="openModal('deposit')">➕ Add Money</button>
+        <button class="btn btn-danger" onclick="openModal('withdraw')">➖ Withdraw</button>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card">
+        <div class="card-header"><span class="icon">👤</span>
+          <h3>Account Information</h3>
+        </div>
+        <div class="profile-item"><span class="label">Account ID</span><span class="value" id="accountId">-</span></div>
+        <div class="profile-item"><span class="label">Name</span><span class="value" id="accountName">-</span></div>
+        <div class="profile-item"><span class="label">Username</span><span class="value" id="accountUsername">-</span>
+        </div>
+        <div class="profile-item"><span class="label">Role</span><span class="value" id="accountRole">-</span></div>
+      </div>
+      <div class="card" id="notesCard">
+        <div class="card-header"><span class="icon">📝</span>
+          <h3>Account Notes</h3>
+        </div>
+        <div class="notes-box" id="accountNotes">No notes on this account.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="depositModal">
+    <div class="modal">
+      <h3>➕ Add Money</h3>
+      <div class="form-group">
+        <label for="depositAmount">Amount (€)</label>
+        <input type="number" id="depositAmount" placeholder="Enter amount" min="1" step="0.01">
+      </div>
+      <div class="btn-group" style="justify-content:flex-end;">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('deposit')">Cancel</button>
+        <button class="btn btn-success btn-sm" onclick="doDeposit()">Deposit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal">
+      <h3>➖ Withdraw Money</h3>
+      <div class="form-group">
+        <label for="withdrawAmount">Amount (€)</label>
+        <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1" step="0.01">
+      </div>
+      <div class="btn-group" style="justify-content:flex-end;">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('withdraw')">Cancel</button>
+        <button class="btn btn-danger btn-sm" onclick="doWithdraw()">Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="support-widget">
+    <div class="support-popup" id="supportPopup">
+      <div class="support-popup-header">
+        <h4>💬 Customer Support</h4>
+        <p>Banco de España Digital Help Desk</p>
+      </div>
+      <div class="support-popup-body">
+        <p>Need help with your account? Our support agents are here to assist you.</p>
+        <button class="btn btn-primary btn-block btn-sm" id="connectAgentBtn" onclick="connectToAgent()">Connect to
+          Agent</button>
+        <div class="support-status mt-2" id="supportStatus" style="display:none;">
+          <span class="dot"></span><span id="supportStatusText">Connecting...</span>
+        </div>
+      </div>
+    </div>
+    <button class="support-btn" onclick="toggleSupport()">💬</button>
+  </div>
+
+  <script>
+    let displayedBalance = 0;
+    const fmt = n => '€' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const updateBal = () => document.getElementById('balanceDisplay').textContent = fmt(displayedBalance);
+
+    function openModal(t) { document.getElementById(t + 'Modal').classList.add('active'); }
+    function closeModal(t) { document.getElementById(t + 'Modal').classList.remove('active'); }
+
+    function doDeposit() {
+      const a = parseFloat(document.getElementById('depositAmount').value);
+      if (!a || a <= 0) return;
+      displayedBalance += a; updateBal();
+      document.getElementById('depositAmount').value = ''; closeModal('deposit');
+    }
+    function doWithdraw() {
+      const a = parseFloat(document.getElementById('withdrawAmount').value);
+      if (!a || a <= 0) return;
+      if (a > displayedBalance) { alert('Insufficient funds.'); return; }
+      displayedBalance -= a; updateBal();
+      document.getElementById('withdrawAmount').value = ''; closeModal('withdraw');
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/account');
+        if (res.status === 401) { window.location.href = '/login.html'; return; }
+        const u = await res.json();
+        document.getElementById('welcomeMsg').textContent = 'Welcome, ' + u.name;
+        document.getElementById('roleLabel').textContent = u.role === 'employee' ? '🎭 Employee Account' : '👤 Customer Account';
+        document.getElementById('accountId').textContent = u.id;
+        document.getElementById('accountName').textContent = u.name;
+        document.getElementById('accountUsername').textContent = u.username;
+        document.getElementById('accountRole').textContent = u.role;
+        displayedBalance = u.balance || 0; updateBal();
+        document.getElementById('accountNotes').textContent = (u.notes && u.notes.trim()) ? u.notes : 'No notes on this account.';
+      } catch (e) { window.location.href = '/login.html'; }
+    }
+
+    function toggleSupport() { document.getElementById('supportPopup').classList.toggle('active'); }
+    async function connectToAgent() {
+      const s = document.getElementById('supportStatus'), t = document.getElementById('supportStatusText'), b = document.getElementById('connectAgentBtn');
+      b.disabled = true; b.textContent = 'Connecting...'; s.style.display = 'flex';
+      t.textContent = 'Searching for available agents...';
+      try {
+        const r = await fetch('/api/support/connect', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic: 'account_help' }) });
+        t.textContent = (await r.json()).message || 'No agents available.';
+      } catch (e) { t.textContent = 'Connection failed.'; }
+      b.textContent = 'Retry'; b.disabled = false;
+    }
+    async function logout() { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/'; }
+
+    if (!document.cookie.includes('session=')) window.location.href = '/login.html';
+    else loadProfile();
+  </script>
+</body>
+
+</html>
