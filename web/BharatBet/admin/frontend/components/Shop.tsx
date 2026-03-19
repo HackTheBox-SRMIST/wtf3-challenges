@@ -7,13 +7,14 @@ interface ShopProps {
   onClose: () => void;
   user: User;
   onBuyFlag: () => void;
+  flagValue?: string | null;
 }
 
-const Shop: React.FC<ShopProps> = ({ isOpen, onClose, user, onBuyFlag }) => {
+const Shop: React.FC<ShopProps> = ({ isOpen, onClose, user, onBuyFlag, flagValue }) => {
   if (!isOpen) return null;
 
   const canAfford = user.balance >= GAME_SETTINGS.FLAG_PRICE;
-  const isPurchased = (user.flags || []).length > 0;
+  const isPurchased = (user.flags || []).length > 0 || flagValue != null;
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
@@ -43,6 +44,17 @@ const Shop: React.FC<ShopProps> = ({ isOpen, onClose, user, onBuyFlag }) => {
                   {GAME_SETTINGS.FLAG_PRICE.toLocaleString()}
                 </span>
               </div>
+
+              {isPurchased && flagValue && (
+                <div className="mt-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30">
+                  <span className="text-[10px] text-orange-400 font-bold uppercase tracking-[0.2em] block mb-1">
+                    Your Reward
+                  </span>
+                  <div className="text-sm font-mono text-white select-all">
+                    {flagValue}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

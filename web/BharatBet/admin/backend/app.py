@@ -280,6 +280,25 @@ async def preview_avatar(file: str):
         
     return FileResponse(file_path)
 
+@app.get("/api/me")
+def get_my_profile(auth_username: str = Depends(verify_user)):
+    conn = get_db_conn()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT balance, avatar FROM users WHERE username = %s", (auth_username,))
+        result = cursor.fetchone()
+        if result:
+            return {
+                "user": {
+                    "username": auth_username,
+                    "balance": result[0],
+                    "avatar": result[1]
+                }
+            }
+        raise HTTPException(status_code=404, detail="User not found")
+    finally:
+        release_db_conn(conn)
+
 @app.post("/api/buy-flag")
 def buy_flag(auth_username: str = Depends(verify_user)):
     conn = get_db_conn()
@@ -300,7 +319,7 @@ def buy_flag(auth_username: str = Depends(verify_user)):
         )
         conn.commit()
         
-        actual_flag = os.getenv("FLAG", "CTF{flag_not_found_in_environment}")
+        actual_flag = os.getenv("FLAG")
 
         return {
             "message": "Flag purchased!",

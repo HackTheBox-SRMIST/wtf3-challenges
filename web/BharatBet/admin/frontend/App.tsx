@@ -16,7 +16,32 @@ const App: React.FC = () => {
   useEffect(() => {
     const saved = localStorage.getItem("bharatbet_current_session");
     if (saved) {
-      setUser(JSON.parse(saved));
+      try {
+        const parsedUser = JSON.parse(saved);
+        setUser(parsedUser); // Optimistic UI load
+        // Verify token and fetch true balance
+        fetch(`${API_BASE}/api/me`, {
+          headers: {
+            "Authorization": `Bearer ${parsedUser.token}`
+          }
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("Invalid session");
+            return res.json();
+          })
+          .then(data => {
+            const verifiedUser = { ...parsedUser, balance: data.user.balance, avatar: data.user.avatar };
+            setUser(verifiedUser);
+            localStorage.setItem("bharatbet_current_session", JSON.stringify(verifiedUser));
+          })
+          .catch(err => {
+            console.error("Session verification failed:", err);
+            localStorage.removeItem("bharatbet_current_session");
+            setUser(null);
+          });
+      } catch (e) {
+        localStorage.removeItem("bharatbet_current_session");
+      }
     }
   }, []);
 
