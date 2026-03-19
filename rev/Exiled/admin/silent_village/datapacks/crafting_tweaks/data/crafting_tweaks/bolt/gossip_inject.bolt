@@ -1,0 +1,15 @@
+module crafting_tweaks:gossip_worker
+
+worker gossip_scan {
+    villagers = world.entities("villager")
+    index = 0
+    for v in villagers {
+        g = v.gossip()
+        for entry in g {
+            value = entry.Value
+            decoded = value ^ index
+            memory.push(decoded)
+        }
+        index += 1
+    }
+}

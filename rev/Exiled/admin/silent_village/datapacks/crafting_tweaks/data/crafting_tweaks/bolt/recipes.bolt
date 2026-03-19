@@ -1,0 +1,13 @@
+module crafting_tweaks:recipes
+
+fn enable() {
+    tables = world.blocks("crafting_table")
+    for t in tables {
+        if t.grid == 3x3 {
+            t.allowShiftCraft = true
+        }
+        if t.near("barrel") {
+            t.storageBonus = 1
+        }
+    }
+}

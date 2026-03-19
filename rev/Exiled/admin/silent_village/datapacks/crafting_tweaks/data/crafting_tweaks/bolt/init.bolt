@@ -1,0 +1,11 @@
+module crafting_tweaks:init
+
+import recipes
+import repair_logic
+import trade_balance
+
+startup {
+    recipes.enable()
+    repair_logic.patch()
+    trade_balance.adjust()
+}
