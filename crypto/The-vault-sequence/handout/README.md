@@ -9,3 +9,5 @@ Fragments of something have been carefully embedded across the certificates.. hi
 Not everything here is encrypted.
 Trust hides in the details.
 Remember: the sequence matters.
+
+Author: Vani
