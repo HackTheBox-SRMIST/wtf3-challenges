@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Construction</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #111;
+            color: #0f0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #222;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            border: 1px solid #0f0;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #fff;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .result-box {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #000;
+            border-left: 4px solid #0f0;
+            overflow-x: auto;
+        }
+
+        .warning {
+            color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- AI Generated DEV NOTE: 
+         - To-do: remove the test 'DonutState' class from app.py. It has access to app state but we shouldn't have left it in globally.
+         - By the way, remember how Jinja lets you traverse python's Method Resolution Order (MRO)? If someone were to call .__subclasses__() on the base dict dict.mro()[-1], they could find DonutState and access the 'sessions_data' dictionary via __init__.__globals__!
+         - 'sessions_data' maps our 'donut_session' cookie directly to the user's donut array. 
+         - Reminder: Jinja allows updating dictionaries directly with `.update({'price': 0})` inside a basic `for d in array` loop. Let's make sure no one can evaluate a payload like that natively through the URL path!
+         DO NOT let users modify their price variable to 0 by updating it, the default for the flag donut is set to Infinity!
+    -->
+    <div class="container">
+        <h1>🛠️ Area Under Construction </h1>
+        <p>This part of the donut shop is still being built. It's meant for internal staff testing.</p>
+        <p class="warning">Warning: Do not pass untrusted payload queries they reflect things back on the home page
+            after a single refresh!!!!</p>
+
+        <div class="result-box" id="result">
+            <strong>System Output:</strong><br><br>
+            {% if result %}
+            {{ result | safe }}
+            {% else %}
+            Waiting for input...
+            {% endif %}
+        </div>
+
+        <div style="margin-top: 2rem; font-size: 0.8rem; color: #555;">
+            <a href="/" style="color: #666; text-decoration: none;">&larr; Back to Shop</a>
+        </div>
+    </div>
+</body>
+
+</html>
