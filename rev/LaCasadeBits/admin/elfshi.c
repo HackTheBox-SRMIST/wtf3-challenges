@@ -1,45 +1,14 @@
-/*
- * CTF Challenge: "Trilateral" - Part 1/3 (Linux ELF)
- *
- * A custom 8-instruction stack-based VM that validates shard 1 of the flag.
- * The VM bytecode is the actual key checker — players must:
- *   1. Reverse the VM architecture
- *   2. Disassemble + understand the embedded bytecode
- *   3. Work backwards to find the accepted input
- *
- * Cross-binary dependency:
- *   MAGIC_PE_HASH is derived from SHA256(PE .text section)[0:4], baked in here.
- *   At solve time, players must have already analysed the PE binary.
- *
- * Build:
- *   gcc -O0 -s -o vm_chall vm_chall.c
- *   (strip symbols for extra pain: strip --strip-all vm_chall)
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 
-/* -----------------------------------------------------------------------
- * Cross-binary constant — first 4 bytes of SHA256 of PE's .text section.
- * Players need to find this value from the PE binary first.
- * Change this to match your actual built PE binary.
- * ----------------------------------------------------------------------- */
 #define MAGIC_PE_HASH  0xDEADC0DE
-
-/* -----------------------------------------------------------------------
- * VM Architecture: stack-based, 8 instructions, 256-byte memory
- * Registers: IP (instruction pointer), SP (stack pointer), FLAG (zero flag)
- * Stack: 64 entries deep (uint32_t)
- * Memory: 256 bytes (shared data/code space — self-referential tricks possible)
- * ----------------------------------------------------------------------- */
 
 #define MEM_SIZE    256
 #define STACK_SIZE   64
 #define MAX_STEPS  4096   /* Prevent infinite loops */
 
-/* Opcodes */
 #define OP_PUSH  0x01   /* PUSH <imm8>        — push immediate byte onto stack */
 #define OP_LOAD  0x02   /* LOAD <addr8>       — push mem[addr] onto stack */
 #define OP_STORE 0x03   /* STORE <addr8>      — pop stack, store into mem[addr] */
@@ -53,29 +22,14 @@ typedef struct {
     uint8_t  mem[MEM_SIZE];
     uint32_t stack[STACK_SIZE];
     uint8_t  ip;
-    int8_t   sp;          /* -1 = empty */
+    int8_t   sp;         
     uint8_t  flag;
     int      halted;
     uint8_t  halt_result;
 } VM;
 
-/* -----------------------------------------------------------------------
- * Bytecode program — validates that the 8-byte input (stored at mem[0x10..0x17])
- * equals the expected key when each byte is XOR'd with (index + 0x5A) and
- * then the sum of all transformed bytes must equal MAGIC_PE_HASH & 0xFF.
- *
- * Expected input (the shard): "H4rD_V|V"  (players must derive this)
- *
- * Transformation per byte i:  transformed[i] = input[i] ^ (i + 0x5A)
- * Expected transformed values stored at mem[0x20..0x27]
- * Final checksum check against MAGIC_PE_HASH & 0xFF stored at mem[0x28]
- *
- * Bytecode layout starts at mem[0x40]
- * ----------------------------------------------------------------------- */
-
-/* Helper: push expected transformed values + checksum into memory */
 static void load_expected(VM *vm) {
-    const char *key = "c4r_k3ys";   /* <-- shard 1 */
+    const char *key = "c4r_k3ys";   /* <-- shard 1 (easily finable through ghidra or binaryninja*/ 
     uint8_t checksum = 0;
     for (int i = 0; i < 8; i++) {
         uint8_t t = ((uint8_t)key[i]) ^ (uint8_t)(i + 0x5A);
@@ -86,28 +40,6 @@ static void load_expected(VM *vm) {
     vm->mem[0x28] = (uint8_t)(checksum ^ (MAGIC_PE_HASH & 0xFF));
 }
 
-/*
- * Bytecode:
- *
- * ; --- Check each of 8 bytes ---
- * ; For each index i (0..7):
- * ;   LOAD  input[0x10+i]
- * ;   PUSH  (i + 0x5A)
- * ;   XOR
- * ;   LOAD  expected[0x20+i]
- * ;   CMP
- * ;   JNE   FAIL
- *
- * ; --- Checksum pass ---
- * ;   Accumulate all transformed bytes, XOR with MAGIC_PE_HASH&0xFF
- * ;   CMP against mem[0x28]
- * ;   JNE FAIL
- *
- * ; --- Pass ---
- * ;   HALT 1
- * FAIL:
- * ;   HALT 0
- */
 static void load_bytecode(VM *vm) {
     uint8_t *b = &vm->mem[0x40];
     int p = 0;
