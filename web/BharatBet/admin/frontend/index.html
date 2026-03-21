@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BharatBet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #050510;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            /* Prevent scrolling on main body */
+            background-image: radial-gradient(circle at 50% 0%, #1a1e36 0%, #050510 60%);
+        }
+
+        /* Custom scrollbar for betting list */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1b1c1d;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 3px;
+        }
+
+        /* Hide number input spinners (Chrome, Safari, Edge, Opera) */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Hide number input spinners (Firefox) */
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: none;
+        }
+    </style>
+    <script type="importmap">
+            {
+                "imports": {
+                    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+                    "react": "https://esm.sh/react@^19.2.4",
+                    "react/": "https://esm.sh/react@^19.2.4/"
+                }
+            }
+        </script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
