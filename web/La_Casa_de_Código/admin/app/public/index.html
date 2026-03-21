@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco de España Digital — Your Trusted Digital Bank</title>
+  <meta name="description" content="Banco de España Digital — Secure, modern digital banking for the new era.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">
+      <span class="logo">🏦</span>
+      <span class="brand-text">Banco de <span>España</span> Digital</span>
+    </a>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="/login.html">Sign In</a></li>
+      <li><a href="/register.html" class="btn btn-primary btn-sm">Open Account</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-mask">🎭</div>
+    <h1>The Future of Banking<br>is <span class="accent">Digital</span> & <span class="gold">Secure</span></h1>
+    <p>Welcome to Banco de España Digital. We offer state-of-the-art security, real-time transactions, and the trust
+      that comes with centuries of banking tradition.</p>
+    <div class="btn-group">
+      <a href="/register.html" class="btn btn-primary btn-lg">Open Your Account</a>
+      <a href="/login.html" class="btn btn-outline btn-lg">Sign In</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="card feature-card">
+      <div class="card-header"><span class="icon">🔒</span>
+        <h3>Military-Grade Security</h3>
+      </div>
+      <p>Our vaults are protected by the most advanced security systems in Europe. Your assets are safer here than
+        anywhere else.</p>
+    </div>
+    <div class="card feature-card">
+      <div class="card-header"><span class="icon">⚡</span>
+        <h3>Instant Transfers</h3>
+      </div>
+      <p>Move your money at the speed of light. Real-time settlement with zero delays, zero complications.</p>
+    </div>
+    <div class="card feature-card">
+      <div class="card-header"><span class="icon">🌍</span>
+        <h3>Global Reach</h3>
+      </div>
+      <p>From Madrid to Manila. Access your accounts from anywhere in the world with our cutting-edge digital platform.
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="tagline">La resistencia es el camino.</p>
+    <p>© 2024 Banco de España Digital. All rights reserved.</p>
+    <p style="margin-top:4px;">Member of the European Central Bank System</p>
+  </footer>
+
+  <div class="support-widget" id="supportWidget">
+    <div class="support-popup" id="supportPopup">
+      <div class="support-popup-header">
+        <h4>💬 Customer Support</h4>
+        <p>Banco de España Digital Help Desk</p>
+      </div>
+      <div class="support-popup-body">
+        <p>Need help with your account? Our support agents are here to assist you.</p>
+        <button class="btn btn-primary btn-block btn-sm" id="connectAgentBtn" onclick="connectToAgent()">Connect to
+          Agent</button>
+        <div class="support-status mt-2" id="supportStatus" style="display:none;">
+          <span class="dot"></span>
+          <span id="supportStatusText">Connecting...</span>
+        </div>
+      </div>
+    </div>
+    <button class="support-btn" onclick="toggleSupport()">💬</button>
+  </div>
+
+  <script>
+
+    function toggleSupport() {
+      document.getElementById('supportPopup').classList.toggle('active');
+    }
+
+    async function connectToAgent() {
+      const statusEl = document.getElementById('supportStatus');
+      const statusText = document.getElementById('supportStatusText');
+      const btn = document.getElementById('connectAgentBtn');
+      btn.disabled = true; btn.textContent = 'Connecting...';
+      statusEl.style.display = 'flex';
+      statusText.textContent = 'Searching for available agents...';
+
+      try {
+        const res = await fetch('/api/support/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: 'general_inquiry' })
+        });
+        if (res.status === 401) {
+          statusText.textContent = 'Please log in to use support chat.';
+          btn.textContent = 'Connect to Agent'; btn.disabled = false; return;
+        }
+        const data = await res.json();
+        statusText.textContent = data.message || 'No agents available at this time.';
+      } catch (err) {
+        statusText.textContent = 'Connection failed. Please try again.';
+      }
+      btn.textContent = 'Retry'; btn.disabled = false;
+    }
+
+    (function () {
+      if (document.cookie.includes('session=')) {
+        document.getElementById('navLinks').innerHTML = `
+          <li><a href="/dashboard.html">Dashboard</a></li>
+          <li><a href="#" onclick="logout()" class="btn btn-outline btn-sm">Sign Out</a></li>`;
+      }
+    })();
+    async function logout() {
+      await fetch('/api/logout', { method: 'POST' });
+      window.location.href = '/';
+    }
+  </script>
+</body>
+
+</html>
