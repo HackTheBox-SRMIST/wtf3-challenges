@@ -2,6 +2,15 @@ FROM kalilinux/kali-rolling
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN printf '%s\n' \
+  "deb http://mirrors.ocf.berkeley.edu/kali kali-rolling main contrib non-free" \
+  "# deb-src http://mirrors.ocf.berkeley.edu/kali kali-rolling main contrib non-free" \
+  "deb http://mirrors.dotsrc.org/kali kali-rolling main contrib non-free" \
+  "# deb-src http://mirrors.dotsrc.org/kali kali-rolling main contrib non-free" \
+  "deb http://mirror.serverion.com/kali kali-rolling main contrib non-free" \
+  "# deb-src http://mirror.serverion.com/kali kali-rolling main contrib non-free" \
+  > /etc/apt/sources.list
+
 RUN apt update && apt install -y \
     gcc \
     socat \
