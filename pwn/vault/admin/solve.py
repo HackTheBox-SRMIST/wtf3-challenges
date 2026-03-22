@@ -1,9 +1,12 @@
 from pwn import *
 
-path='./challenge'
-elf = ELF(path, checksec=True)
+elf = ELF('./challenge', checksec=True)
 context.log_level="DEBUG"
-p = process(path)
+
+if args.REMOTE:
+    p = remote("40.82.147.253", 1340)
+else:
+    p = process('./challenge')
 
 #finding the win() func addr
 win_addr = elf.symbols["win"]

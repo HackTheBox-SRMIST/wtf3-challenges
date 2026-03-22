@@ -17,13 +17,12 @@ RUN apt install socat -y
 RUN useradd -m ctf
 
 WORKDIR /home/ctf
-
-COPY challenge .
+COPY chall .
 COPY flag.txt .
 
-RUN chown root:root challenge
-RUN chmod 755 challenge
-RUN chmod +x challenge
+RUN chown root:root chall
+RUN chmod 755 chall
+RUN chmod +x chall
 RUN chown root:root flag.txt && chmod 400 flag.txt
 RUN chmod 644 flag.txt
 
@@ -31,4 +30,4 @@ USER ctf
 
 EXPOSE 1337
 
-CMD ["socat","TCP-LISTEN:1337,reuseaddr,fork","EXEC:./challenge"]
+CMD ["socat","TCP-LISTEN:1337,reuseaddr,fork","EXEC:./chall"]
