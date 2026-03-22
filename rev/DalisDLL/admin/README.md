@@ -1,4 +1,4 @@
-# Challenge: Dali's DLL
+# Dali's DLL
 
 ## Description
 
