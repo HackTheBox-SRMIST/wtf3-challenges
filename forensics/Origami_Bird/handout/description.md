@@ -12,8 +12,12 @@ Can you unfold the secrets hidden within?
 
 **Note:** The flag format for this challenge is `HTB{...}`.
 
+## Hints
+1. Sometimes the most important details are the ones you cannot see. 
+2. Are there any "Zero-Width" anomalies in the extracted files?
+
 ## Attachments
 - `origami.jpg`
 
-#
+---
 **Author:** sudo_kk
