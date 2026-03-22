@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# Good job finding the secret training grounds!
+# Flag: HTB{C14nk_C14nk_f0r_sum_Mu14}
