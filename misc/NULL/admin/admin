@@ -1,0 +1,27 @@
+Null
+
+It exists. That's all anyone remembers. The encryption is broken. The encoding is public. The hiding place is known. And yet, no one has ever seen what's inside.
+Maybe there's nothing there. Maybe there's everything.
+The fragment is all you have.
+
+Category : Misc
+Author : Akash
+
+
+Step 1 : Creating the plaintext.bin file Using echo "2f396a2f34414151536b5a4a" | xxd -r -p > plaintext.bin we get the plaintext.bin to use it for cracking
+
+Step 2 : Breaking the ZIP EncryptionError Using ./build/src/bkcrack -C Null.zip -c gibberish.txt -p plaintext.bin we attack Null.zip and it Uses plaintext.bin (the known 12 bytes) for the attack
+
+Step 3 : Keys Found: b5663590 3f561fb3 980b5f65
+
+Step 4 : Decrypt the file using recovered keys bkcrack -C Null.zip -c gibberish.txt -k b5663590 3f561fb3 980b5f65 -d decrypted.txt
+
+Step 5 : Decode the corrected Base64 to recover the image base64 -d  decrypted.txt > recovered_image.jpg
+
+Step 6 : if they scan the qr they will get rick rolled 
+
+Step 7 : Brute force the image using  stegseek recovered_image.jpg /usr/share/wordlists/rockyou.txt
+
+Step 8 : Read the flag cat recovered_image.jpg.out
+
+Flag = HTB{N3V3R_G0nnA_G1v3_Y0u_Up_o_O}
