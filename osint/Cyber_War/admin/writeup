@@ -1,0 +1,44 @@
+Cyber War
+
+
+Over the past two decades, cyberspace has increasingly become a
+battleground for nation states. Sophisticated malware, covert
+operations, and attacks targeting critical infrastructure have
+transformed the digital world into a new domain of conflict.
+
+Several reports and investigations have suggested that some of the
+earliest large-scale cyber operations were directed at sensitive
+industrial systems and nuclear infrastructure, marking what many
+analysts consider the beginning of modern cyber warfare.
+
+Amid these developments, a DPRK party daily published commentary
+accusing the United States of initiating this new era of conflict in
+the digital domain, referring to it as the "prelude to cyber war."
+
+Your task is to locate this declassified report and identify the
+SERIAL number mentioned in the document header.
+
+Flag format: HTB{serialnumber}
+
+Category : OSINT
+Author : Akash
+
+Write-up
+The challenge description talks about cyber warfare and mentions that a DPRK party daily accused the United States of initiating a new era of cyber conflict, referring to it as the “prelude to cyber war”.
+Since the report is declassified, we can find declassified documents from CIA FOIA Electronic Reading Room,where many government documents are publicly available.
+
+Website:
+https://www.cia.gov/readingroom/search/site
+
+Using the search bar on the site and searching for the keyword "prelude to cyber war" leads to a document named 
+"DPRK PARTY DAILY BLAMES US FOR OPENING UP 'PRELUDE' TO 'CYBER WAR'"
+
+Opening the PDF shows the declassified report. In the header section of the document, there is a field labeled SERIAL. The value listed there is:
+
+KPR2015121060229029
+
+Since the flag format is HTB{serialnumber}, 
+
+the final flag is:
+HTB{KPR2015121060229029}
+
