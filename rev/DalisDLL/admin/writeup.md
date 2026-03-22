@@ -104,8 +104,6 @@ Stored bytes (`local_b0`) are mathematically transformed to dictate the actual t
 
 When it executes `(**(code **)*local_f0)(local_f0,local_c0,&local_f8);` (which translates to `pObj->QueryInterface(&iid, &pOut)`), it fails. Because we are failing the `QueryInterface` call, we know: **The constructed IID is incorrect because the original array bytes are obfuscated.**
 
-![Ghidra XOR Loop Placeholder](img/iid_loop.png)
-
 ## 7. Where to Get the Real IID
 
 To fix the call, we need the correct hidden IID. There are two paths:
@@ -162,7 +160,7 @@ So when we inject the raw memory, the literal 16-byte hex array we need is:
    `02 00 A7 C4 33 33 44 44 4D 45 30 57 43 41 54 31`
 
 
-![Ghidra Patching](img/patching_guid.png)
+![Ghidra Patching](images/patching_guid.png)
 
 ## 9. GetFLag
 
