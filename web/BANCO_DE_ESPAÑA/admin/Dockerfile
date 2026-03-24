@@ -1,26 +1,17 @@
-# Build stage 
-FROM python:3.12-slim AS builder
+FROM python:3.12-slim
 
-WORKDIR /app
-
-RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
+RUN apt update -y && apt install -y gcc && rm -rf /var/lin/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install --prefix=/install --no-cache-dir -r requirements.txt
 
-# Runtime stage 
-FROM python:3.12-slim AS runtime
+RUN pip install -r requirements.txt
 
 WORKDIR /app
 
-# Copy installed packages from builder & app source 
-COPY --from=builder /install /usr/local
 COPY . .
 
-# Make start script executable
 RUN chmod +x scripts/start.sh
 
 EXPOSE 8000
 
-CMD ["/bin/sh", "scripts/start.sh"] 
-
+CMD ["/bin/sh", "scripts/start.sh"]
