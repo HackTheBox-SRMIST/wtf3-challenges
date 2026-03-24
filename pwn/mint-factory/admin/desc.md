@@ -1,8 +1,8 @@
-# challenge: minty
+# challenge: mint-factory
 ## category: pwn / binary Exploitation
 ### Description
 ```
-mint too many coins and the bank collapses
+mint too many coins and the economy collapses
 ```
 ### Author : novo
 
