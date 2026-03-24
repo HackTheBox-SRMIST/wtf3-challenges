@@ -11,16 +11,16 @@ html_template = """
     <title>Hollow Vault</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-        body {
-            background: linear-gradient(135deg, #050510 0%, #1a1a2e 100%);
+        body {{
+            background-color: linear-gradient(135deg, #050510 0%, #1a1a2e 100%);
             color: #d1d8e0;
             font-family: 'Share Tech Mono', monospace;
             text-align: center;
             padding-top: 8%;
             margin: 0;
             height: 100vh;
-        }
-        .container {
+        }}
+        .container {{
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 40px;
             display: inline-block;
@@ -28,12 +28,12 @@ html_template = """
             background: rgba(17, 17, 17, 0.8);
             border-radius: 8px;
             backdrop-filter: blur(5px);
-        }
-        h1 { color: #f39c12; text-shadow: 0 0 10px rgba(243, 156, 18, 0.5); font-size: 2.5em; margin-bottom: 20px;}
-        p { font-size: 1.2em; color: #8fa0b5; }
-        a { color: #00f0ff; text-decoration: none; padding: 5px; border-bottom: 1px dashed #00f0ff; transition: all 0.3s ease; }
-        a:hover { color: #fff; border-bottom: 1px solid #fff; text-shadow: 0 0 8px #00f0ff; }
-        pre { background: #0a0a0a; padding: 20px; border: 1px solid #333; max-width: 600px; margin: 20px auto; overflow-x: auto; text-align: left; color: #0f0; box-shadow: inset 0 0 10px #000; border-radius: 4px; }
+        }}
+        h1 {{ color: #f39c12; text-shadow: 0 0 10px rgba(243, 156, 18, 0.5); font-size: 2.5em; margin-bottom: 20px;}}
+        p {{ font-size: 1.2em; color: #8fa0b5; }}
+        a {{ color: #00f0ff; text-decoration: none; padding: 5px; border-bottom: 1px dashed #00f0ff; transition: all 0.3s ease; }}
+        a:hover {{ color: #fff; border-bottom: 1px solid #fff; text-shadow: 0 0 8px #00f0ff; }}
+        pre {{ background: #0a0a0a; padding: 20px; border: 1px solid #333; max-width: 600px; margin: 20px auto; overflow-x: auto; text-align: left; color: #0f0; box-shadow: inset 0 0 10px #000; border-radius: 4px; }}
     </style>
 </head>
 <body>
