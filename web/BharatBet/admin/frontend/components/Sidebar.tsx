@@ -76,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ bets, myBets, topBets, currentUser })
 
               <div className="flex flex-col items-end gap-0.5">
                 <div className={`font-bold tracking-tight ${bet.cashOutMultiplier ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]' : 'text-white'}`}>
-                  ₹{bet.cashOutMultiplier ? bet.winAmount : bet.amount}
+                  ₹{bet.cashOutMultiplier ? Number(bet.winAmount).toFixed(2) : Number(bet.amount).toFixed(2)}
                 </div>
                 {bet.cashOutMultiplier && (
                   <div className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded-md font-black tracking-wider">
