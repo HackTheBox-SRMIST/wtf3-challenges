@@ -15,5 +15,5 @@ export const API_BASE = VITE_API_URL
 export const WS_BASE = VITE_API_URL
   ? VITE_API_URL.replace(/^http/, "ws")
   : IS_PROD
-    ? `wss://${window.location.host}`
+    ? `ws://${window.location.host}`
     : "ws://localhost:8000";
