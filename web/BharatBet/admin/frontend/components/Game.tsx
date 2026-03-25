@@ -20,7 +20,7 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
     history: [],
   });
 
-  const [betAmount, setBetAmount] = useState<number>(10);
+  const [betAmount, setBetAmount] = useState<string>('10');
   const [activeBet, setActiveBet] = useState<boolean>(false);
   const [cashedOut, setCashedOut] = useState<boolean>(false);
   const [containerSize, setContainerSize] = useState({
@@ -28,6 +28,8 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
     height: 500,
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [completedBets, setCompletedBets] = useState<any[]>([]);
+  const [topBets, setTopBets] = useState<any[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const multiplierRef = useRef<HTMLDivElement>(null);
@@ -61,6 +63,26 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
         setActiveBet(false);
         setCashedOut(false);
       }
+
+      if (
+        liveState.status === GameStatus.CRASHED &&
+        statusRef.current !== GameStatus.CRASHED
+      ) {
+        const finalBets = liveState.bets || [];
+        const myRoundBets = finalBets.filter((b: any) => b.userId === userRef.current.username);
+        if (myRoundBets.length > 0) {
+          setCompletedBets(prev => [...myRoundBets, ...prev].slice(0, 50));
+        }
+        const winningBets = finalBets.filter((b: any) => b.cashOutMultiplier);
+        if (winningBets.length > 0) {
+          setTopBets(prev => {
+            const combined = [...prev, ...winningBets];
+            combined.sort((a, b) => b.winAmount - a.winAmount);
+            return combined.slice(0, 50);
+          });
+        }
+      }
+
       statusRef.current = liveState.status;
       setGameState(liveState);
 
@@ -135,20 +157,21 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
     setErrorMsg(null);
 
-    if (betAmount < 10 || betAmount > 8000) {
+    const numAmount = parseFloat(betAmount);
+    if (isNaN(numAmount) || numAmount < 10 || numAmount > 8000) {
       setErrorMsg("Bet must be between ₹10 and ₹8000");
       return;
     }
 
     try {
       if (gameState.status === GameStatus.WAITING && !activeBet) {
-        if (userRef.current.balance < betAmount)
+        if (userRef.current.balance < numAmount)
           throw new Error("Insufficient funds");
         wsRef.current.send(
           JSON.stringify({
             action: "place_bet",
             userId: userRef.current.username,
-            amount: betAmount,
+            amount: numAmount,
             token: userRef.current.token,
           }),
         );
@@ -187,9 +210,9 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
         bets={gameState.bets}
         myBets={[
           ...(gameState.bets || []).filter((b: any) => b.userId === user.username),
-          ...(gameState.completedBets || []).filter((b: any) => b.userId === user.username)
+          ...completedBets
         ]}
-        topBets={gameState.topBets || []}
+        topBets={topBets}
         currentUser={user}
       />
       <div className="flex-1 flex flex-col relative z-10 w-full min-w-0 shadow-[-10px_0_30px_rgba(0,0,0,0.5)] min-h-[500px]">
@@ -264,15 +287,15 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
               <span>Bet Amount</span>
               <span
                 className={
-                  betAmount > user.balance ? "text-red-500" : "text-emerald-400"
+                  parseFloat(betAmount) > user.balance ? "text-red-500" : "text-emerald-400"
                 }
               >
-                {betAmount > user.balance ? "INSUFFICIENT FUNDS" : "READY"}
+                {parseFloat(betAmount) > user.balance ? "INSUFFICIENT FUNDS" : "READY"}
               </span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-xl p-1 flex items-center relative h-10 md:h-12 shadow-inner group focus-within:border-white/30 focus-within:bg-white/10 transition-all">
               <button
-                onClick={() => setBetAmount(Math.max(10, betAmount - 10))}
+                onClick={() => setBetAmount(v => String(Math.max(10, parseFloat(v || '0') - 10)))}
                 className="w-10 md:w-12 h-full bg-black/40 hover:bg-black/60 rounded-lg text-gray-400 hover:text-white font-bold text-xl flex items-center justify-center transition-colors"
                 disabled={activeBet}
               >
@@ -280,15 +303,18 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
               </button>
               <input
                 type="number"
+                step="0.01"
                 value={betAmount}
-                onChange={(e) =>
-                  setBetAmount(Math.min(8000, Math.max(10, Number(e.target.value))))
-                }
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val.includes('.') && val.split('.')[1].length > 2) return;
+                  setBetAmount(val);
+                }}
                 className="flex-1 bg-transparent text-center text-white font-bold outline-none px-2 w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 disabled={activeBet}
               />
               <button
-                onClick={() => setBetAmount(Math.min(8000, betAmount + 10))}
+                onClick={() => setBetAmount(v => String(Math.min(8000, parseFloat(v || '0') + 10)))}
                 className="w-10 md:w-12 h-full bg-black/40 hover:bg-black/60 rounded-lg text-gray-400 hover:text-white font-bold text-xl flex items-center justify-center transition-colors"
                 disabled={activeBet}
               >
@@ -299,7 +325,7 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
               {[10, 50, 100, 500].map((amt) => (
                 <button
                   key={amt}
-                  onClick={() => setBetAmount(amt)}
+                  onClick={() => setBetAmount(String(amt))}
                   disabled={activeBet}
                   className="bg-white/5 border border-white/5 text-[9px] md:text-[10px] py-1 md:py-1.5 rounded-md font-bold text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
                 >
@@ -317,10 +343,10 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
               (activeBet && cashedOut) ||
               (gameState.status === GameStatus.WAITING &&
                 !activeBet &&
-                (user.balance < betAmount || betAmount < 10 || betAmount > 8000))
+                (user.balance < parseFloat(betAmount) || parseFloat(betAmount) < 10 || parseFloat(betAmount) > 8000))
             }
             className={`w-full max-w-sm md:max-w-none md:w-96 h-14 md:h-20 rounded-2xl text-xl md:text-2xl font-black shadow-[0_10px_30px_rgba(0,0,0,0.5)] transform transition-all active:scale-95 flex flex-col items-center justify-center leading-none border-t border-white/20 relative overflow-hidden group z-10
-              ${gameState.status === GameStatus.WAITING && !activeBet ? (user.balance < betAmount || betAmount < 10 || betAmount > 8000 ? "bg-white/5 text-gray-500 cursor-not-allowed opacity-50" : "bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white drop-shadow-[0_0_15px_rgba(52,211,153,0.4)]") : ""}
+              ${gameState.status === GameStatus.WAITING && !activeBet ? (user.balance < parseFloat(betAmount) || parseFloat(betAmount) < 10 || parseFloat(betAmount) > 8000 ? "bg-white/5 text-gray-500 cursor-not-allowed opacity-50" : "bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white drop-shadow-[0_0_15px_rgba(52,211,153,0.4)]") : ""}
               ${gameState.status === GameStatus.WAITING && activeBet ? "bg-gradient-to-b from-red-500 to-red-700 hover:from-red-400 hover:to-red-600 text-white drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]" : ""}
               ${gameState.status === GameStatus.FLYING && activeBet && !cashedOut ? "bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 text-white drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]" : ""}
               ${(gameState.status === GameStatus.FLYING && (!activeBet || cashedOut)) || gameState.status === GameStatus.CRASHED ? "bg-white/5 text-gray-600 cursor-not-allowed" : ""}
@@ -331,9 +357,9 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
                 <>
                   <span className="text-3xl tracking-wide">BET</span>
                   <span className="text-xs font-medium opacity-80 mt-1">
-                    {betAmount < 10 || betAmount > 8000
+                    {parseFloat(betAmount) < 10 || parseFloat(betAmount) > 8000
                       ? "BET BETW. ₹10-₹8000"
-                      : user.balance < betAmount
+                      : user.balance < parseFloat(betAmount)
                         ? "INSUFFICIENT FUNDS"
                         : "PLACE YOUR BET"}
                   </span>
@@ -351,7 +377,7 @@ const Game: React.FC<GameProps> = ({ user, onUpdateBalance }) => {
                   <>
                     <span className="text-3xl">CASHOUT</span>
                     <span className="text-xl font-mono mt-1 bg-black/20 px-3 rounded">
-                      ₹{(betAmount * gameState.currentMultiplier).toFixed(0)}
+                      ₹{(parseFloat(betAmount) * gameState.currentMultiplier).toFixed(0)}
                     </span>
                   </>
                 )}
