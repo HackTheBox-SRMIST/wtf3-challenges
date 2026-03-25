@@ -30,7 +30,7 @@ RUN gcc vuln.c -o vuln \
     -z lazy
 
 RUN chmod +x vuln
-RUN chown root:root flag.txt && chmod 400 flag.txt
+RUN chown root:root flag.txt && chmod 644 flag.txt
 
 USER ctf
 

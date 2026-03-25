@@ -29,6 +29,6 @@ RUN chmod 644 flag.txt
 
 USER ctf
 
-EXPOSE 1340
+EXPOSE 1337
 
 CMD ["socat","TCP-LISTEN:1337,reuseaddr,fork","EXEC:./challenge"]
