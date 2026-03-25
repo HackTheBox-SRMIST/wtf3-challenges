@@ -1,4 +1,4 @@
-Cyber War
+#Cyber War
 
 Over the past two decades, cyberspace has increasingly become a
 battleground for nation states. Sophisticated malware, covert
@@ -20,5 +20,4 @@ SERIAL number mentioned in the document header.
 Flag format: HTB{serialnumber}
 
 
-Category : OSINT
-Author : Akash
+'Author : Akash'
