@@ -1,0 +1,7 @@
+C HTB{1a_C0s4_ds_9mpel}= ;k%Fv9c'xrD)=+{FJUt<Q%bTL.
+the given chipper text is encoded with base92
+
+when the given cipher is decoded they get IXM{1l_C0u4_ls_9aqiw} which is an Vigenère cipher
+to decode it they would need to figure the key "Bellaciao" from the given message 
+
+flag = HTB{1a_C0s4_ds_9mpel}
