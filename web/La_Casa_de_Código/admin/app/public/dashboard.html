@@ -128,7 +128,7 @@
     async function loadProfile() {
       try {
         const res = await fetch('/api/account');
-        if (res.status === 401) { window.location.href = '/login.html'; return; }
+        if (res.status === 401) { document.cookie = 'session=; Max-Age=0; path=/'; window.location.href = '/login.html'; return; }
         const u = await res.json();
         document.getElementById('welcomeMsg').textContent = 'Welcome, ' + u.name;
         document.getElementById('roleLabel').textContent = u.role === 'employee' ? '🎭 Employee Account' : '👤 Customer Account';
@@ -138,7 +138,7 @@
         document.getElementById('accountRole').textContent = u.role;
         displayedBalance = u.balance || 0; updateBal();
         document.getElementById('accountNotes').textContent = (u.notes && u.notes.trim()) ? u.notes : 'No notes on this account.';
-      } catch (e) { window.location.href = '/login.html'; }
+      } catch (e) { document.cookie = 'session=; Max-Age=0; path=/'; window.location.href = '/login.html'; }
     }
 
     function toggleSupport() { document.getElementById('supportPopup').classList.toggle('active'); }
